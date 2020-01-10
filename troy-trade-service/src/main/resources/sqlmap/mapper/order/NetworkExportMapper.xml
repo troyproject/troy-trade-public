@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.troy.trade.mapper.order.NetworkExportMapper">
+
+
+    <!-- 根据交易对ID查询用户交易权限 -->
+    <select id="queryAllNetworkExport" resultType="NetworkExportResResultDto">
+       select a.network_export_id as networkExportId, a.export_ip as exportIp,
+        GROUP_CONCAT(e.acct_name) as accountName
+        from network_export a
+        LEFT JOIN exchange_account e
+        on a.export_ip=e.export_ip
+        group by a.export_ip
+    </select>
+
+</mapper>

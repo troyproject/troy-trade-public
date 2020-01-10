@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.troy.trade.mapper.report.ExchAcctClearTimeMapper">
+    <sql id="base_sql">
+        exch_acct_clear_time_id,clear_time,clear_type,
+        create_by,create_time,update_by,update_time,last_update_from_ip
+    </sql>
+
+    <select id="getLastClearTime" resultType="ExchAcctClearTimeModel">
+        SELECT
+        <include refid="base_sql"/>
+        from report_exch_acct_clear_time
+        ORDER BY clear_time DESC
+        limit 1
+    </select>
+
+
+    <!-- 新增ExchAcctClearTimeModel数据 -->
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO report_exch_acct_clear_time (
+        <include refid="base_sql"/>
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.exchAcctClearTimeId},#{item.clearTime},#{item.clearType},
+            #{item.createBy},now(),#{item.updateBy},#{item.updateTime},#{item.lastUpdateFromIp}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

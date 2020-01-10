@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.troy.trade.mapper.account.SpotLevelRuleMapper">
+	<resultMap id="SpotLevelRuleResult" type="com.troy.trade.model.domain.account.SpotLevelRuleModel">
+			<result property="id" column="id" />
+			<result property="level" column="level" />
+			<result property="btcCount" column="btc_count" />
+			<result property="createBy" column="create_by" />
+			<result property="updateBy" column="update_by" />
+			<result property="createTime" column="create_time" />
+			<result property="updateTime" column="update_time" />
+			<result property="lastUpdateFromIp" column="last_update_from_ip" />
+			<result property="troyCount" column="troy_count" />
+	</resultMap>
+
+	<select id="queryByCondition" resultType="com.troy.trade.api.model.dto.out.account.SpotLevelRuleResDto" >
+		SELECT * FROM spot_level_rule
+	</select>
+
+	<select id="queryMaxLevel" resultType="java.lang.Integer">
+		select max(level) from spot_level_rule
+	</select>
+
+	<select id="queryMaxId" resultMap="SpotLevelRuleResult">
+		select * from spot_level_rule ORDER BY id DESC LIMIT 1
+	</select>
+
+</mapper>

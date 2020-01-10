@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.troy</groupId>
+        <artifactId>troy-baseline</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>troy-trade</artifactId>
+    <packaging>pom</packaging>
+
+    <name>troy-trade</name>
+
+    <modules>
+        <module>troy-trade-api</module>
+        <module>troy-trade-task</module>
+        <module>troy-trade-service</module>
+        <module>troy-trade-provider</module>
+    </modules>
+
+    <properties>
+        <swagger2.version>2.7.0</swagger2.version>
+        <troy-user-client.version>${project.version}</troy-user-client.version>
+        <hutool-http.version>4.6.1</hutool-http.version>
+        <druid.version>1.1.10</druid.version>
+        <sharding-jdbc-spring-boot-starter.version>4.0.0-RC2</sharding-jdbc-spring-boot-starter.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.troy</groupId>
+            <artifactId>troy-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.troy</groupId>
+            <artifactId>troy-trade-exchange-commons</artifactId>
+            <version>${troy.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

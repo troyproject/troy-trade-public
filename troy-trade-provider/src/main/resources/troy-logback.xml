@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <springProperty scope="context" name="appName" source="spring.application.name"/>
+    <springProperty scope="context" name="logPath" source="logging.path" defaultValue="./logs"/>
+    <springProperty scope="context" name="rootLevel" source="logging.level.root" defaultValue="INFO"/>
+    <springProperty scope="context" name="consolePattern" source="logging.pattern.console"
+                    defaultValue="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] %logger{36} - %msg%n"/>
+    <springProperty scope="context" name="filePattern" source="logging.pattern.file"
+                    defaultValue="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] %logger{36} - %msg%n"/>
+
+    <!-- ch.qos.logback.core.ConsoleAppender 控制台输出 -->
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${consolePattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- error and warn 级别日志输出 -->
+    <appender name="errorFileAppender"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>NEUTRAL</onMismatch><!-- 继续到下个过滤器 -->
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <File>${logPath}/error/${appName}-error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${logPath}/error/${appName}-error-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${filePattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 所有级别日志输出 -->
+    <appender name="allFileAppender"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${logPath}/all/${appName}-all.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${logPath}/all/${appName}-all-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${filePattern}</pattern>
+        </encoder>
+    </appender>
+
+    <root level="${rootLevel}">
+        <appender-ref ref="consoleAppender"/>
+        <appender-ref ref="errorFileAppender"/>
+        <appender-ref ref="allFileAppender"/>
+    </root>
+
+    <!-- 账户币种测试日志 -->
+    <appender name="assetsFileAppender"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <File>${logPath}/assets/assets.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/assets/assets-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${filePattern}</pattern>
+        </encoder>
+    </appender>
+    <!-- 账户币种测试日志 -->
+    <appender name="orderFileAppender"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <File>${logPath}/order/order.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/order/order-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${filePattern}</pattern>
+        </encoder>
+    </appender>
+    <logger name="com.troy.trade.service.impl.order.OrderServiceImpl" level="DEBUG">
+        <appender-ref ref="orderFileAppender"/>
+    </logger>
+    <logger name="com.troy.trade.service.impl.AssetsServicesImpl" level="DEBUG">
+        <appender-ref ref="assetsFileAppender"/>
+    </logger>
+    <logger name="com.troy.trade.service.impl.WalletServiceImpl" level="DEBUG">
+        <appender-ref ref="assetsFileAppender"/>
+    </logger>
+    <logger name="com.troy.trade.service.impl.AccountServiceImpl" level="DEBUG">
+        <appender-ref ref="assetsFileAppender"/>
+    </logger>
+    <logger name="com.troy.trade.service.impl.NotifyServiceImpl" level="DEBUG">
+        <appender-ref ref="assetsFileAppender"/>
+    </logger>
+    <logger name="com.troy.trade.web.AssetsController" level="DEBUG">
+        <appender-ref ref="assetsFileAppender"/>
+    </logger>
+    <logger name="com.troy.trade.web.WalletController" level="DEBUG">
+        <appender-ref ref="assetsFileAppender"/>
+    </logger>
+    <logger name="com.troy.trade.web.AccountController" level="DEBUG">
+        <appender-ref ref="assetsFileAppender"/>
+    </logger>
+</configuration>

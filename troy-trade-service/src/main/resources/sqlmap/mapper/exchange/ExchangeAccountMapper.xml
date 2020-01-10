@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.troy.trade.mapper.exchange.ExchangeAccountMapper">
+
+  <select id="getExchangeAccountIdByExchCode" parameterType="com.troy.trade.api.model.dto.in.account.ExchangeAccountIdReqDto"
+          resultType="java.lang.Long">
+    SELECT
+        exch_acct_id
+    FROM
+        exchange_account
+    WHERE
+        exch_code = #{exchCode}
+        AND status = 1
+    ORDER BY
+        create_time DESC
+  </select>
+
+  <select id="getExchangeAccountByExchCode" parameterType="ExchangeCodeResDto"
+          resultType="ExchangeAccountModel">
+    SELECT *
+    from exchange_account
+    WHERE exch_code = #{exchCode} AND status = 1
+    ORDER BY create_time DESC
+    limit 1
+  </select>
+
+  <!-- 根据交易对ID查询用户交易权限 -->
+  <select id="queryAccountInfo" parameterType="AccountClearReqDto" resultType="ExchangeAccountResDto">
+        SELECT DISTINCT
+        e.exch_code,
+        ea.exch_acct_id
+        FROM
+        exchange_account ea
+        LEFT JOIN exchange e ON e.exch_id = ea.exch_id
+        WHERE ea.status=1 AND e.status=1 AND e.trade_type != 4
+        <if test="null != exchAcctId and '' != exchAcctId">
+          AND ea.exch_acct_id = #{exchAcctId}
+        </if>
+    </select>
+
+    <!-- 根据交易对ID查询用户交易权限 -->
+    <select id="queryAllAdminExchangeAccount" resultType="AdminExchangeAccountResDto">
+        SELECT DISTINCT
+        ea.exch_acct_id,
+        ea.exch_code,
+        ea.acct_name AS exch_acct_name
+        FROM
+        exchange_account ea
+        WHERE ea.status=1
+        ORDER BY ea.acct_name
+    </select>
+
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.troy.trade.mapper.report.ExchAcctClearMapper">
+
+    <sql id="base_sql">
+        exch_acct_clear_id,exch_acct_clear_time_id,exch_code,exch_acct_id,coin,available,frozen,total,
+        change_balance,cny_total,clear_time,clear_type,remark,
+        create_by,create_time,update_by,update_time,last_update_from_ip
+    </sql>
+
+    <select id="getByClearTimeId" resultType="ExchAcctClearModel" parameterType="ExchAcctClearReqDto">
+        SELECT
+        <include refid="base_sql"/>
+        from report_exch_acct_clear
+        where exch_acct_clear_time_id = #{exchAcctClearTimeId}
+          AND exch_acct_id = #{exchAcctId}
+    </select>
+
+    <!-- 新增清算数据 -->
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO report_exch_acct_clear (
+        <include refid="base_sql"/>
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.exchAcctClearId},#{item.exchAcctClearTimeId},#{item.exchCode},#{item.exchAcctId},
+            #{item.coin},#{item.available},#{item.frozen},#{item.total},
+            #{item.changeBalance},#{item.cnyTotal},#{item.clearTime},
+            #{item.clearType},#{item.remark},
+            #{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime},#{item.lastUpdateFromIp}
+            )
+        </foreach>
+    </insert>
+
+
+</mapper>

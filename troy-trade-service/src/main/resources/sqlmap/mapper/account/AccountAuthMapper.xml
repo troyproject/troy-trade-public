@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.troy.trade.mapper.account.AccountAuthMapper">
+	<resultMap id="AccountAuthResult" type="com.troy.trade.model.domain.account.AccountAuthModel">
+			<result property="accountAuthId" column="account_auth_id" jdbcType="BIGINT"/>
+			<result property="accountId" column="account_id" jdbcType="BIGINT"/>
+			<result property="masterUserId" column="master_user_id" jdbcType="BIGINT"/>
+			<result property="masterUsername" column="master_user_name" jdbcType="VARCHAR"/>
+			<result property="slaveUserId" column="slave_user_id" jdbcType="BIGINT"/>
+			<result property="slaveUsername" column="slave_user_name" jdbcType="VARCHAR"/>
+			<result property="authResource" column="auth_resource" />
+			<result property="status" column="status" />
+			<result property="authTime" column="auth_time" />
+			<result property="unauthTime" column="unauth_time" />
+			<result property="createBy" column="create_by" />
+			<result property="createTime" column="create_time" />
+			<result property="updateBy" column="update_by" />
+			<result property="updateTime" column="update_time" />
+			<result property="lastUpdateFromIp" column="last_update_from_ip" />
+	</resultMap>
+
+	<resultMap id="accountAuthDetailMap" type="com.troy.trade.api.model.dto.out.account.auth.AccountAuthDetail">
+		<result property="accountId" column="accountId"/>
+		<result property="userId" column="userId"/>
+		<result property="proxyUserId" column="proxyUserId"/>
+		<result property="masterAccountId" column="masterAccountId"/>
+		<result property="accountOwnership" column="accountOwnership"/>
+		<result property="accountEnabled" column="accountEnabled"/>
+		<result property="auth_resource" column="auth_resource"/>
+		<result property="permissionType" column="permissionType"/>
+		<result property="permissionEnabled" column="permissionEnabled"/>
+		<result property="bindId" column="bindId"/>
+		<result property="bindApiKey" column="bindApiKey"/>
+		<result property="bindApiSecret" column="bindApiSecret"/>
+		<result property="bindPassphrase" column="bindPassphrase"/>
+		<result property="bindIp" column="bindIp"/>
+		<result property="thirdAcctId" column="third_acct_id"/>
+		<result property="bindStatus" column="bindStatus"/>
+	</resultMap>
+
+	<resultMap id="AccountAuthListDetailsMap" type="com.troy.trade.api.model.dto.out.account.auth.AccountAuthListDetails">
+		<result property="accountAuthId" column="account_auth_id" jdbcType="BIGINT"/>
+		<result property="exchangeCode" column="exch_code" jdbcType="VARCHAR"/>
+		<result property="accountName" column="name" jdbcType="VARCHAR"/>
+		<result property="id" column="account_id" jdbcType="BIGINT"/>
+		<result property="permissionType" column="auth_resource" jdbcType="INTEGER"/>
+		<result property="username" column="master_user_name" jdbcType="VARCHAR"/>
+		<result property="proxyUsername" column="slave_user_name" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="queryAccountAuthDetail" resultMap="accountAuthDetailMap" parameterType="java.lang.Long">
+		SELECT
+			a.account_id as accountId,
+			a.user_id as userId,
+			aa.slave_user_id as proxyUserId,
+			a.master_account_id as masterAccountId,
+			a.platform as accountOwnership,
+			a.`status` as accountEnabled,
+			aa.auth_resource as permissionType,
+			aa.`status` as permissionEnabled,
+			ab.account_bind_id as bindId,
+			ab.`status` as bindStatus
+		FROM
+			account a
+			LEFT JOIN account_bind ab ON ab.account_id = a.account_id AND ab.status = 1
+			LEFT JOIN account_auth aa ON aa.account_id = a.account_id AND aa.status = 1
+		WHERE
+			a.account_id = #{accountId} AND a.status = 1
+	</select>
+
+	<select id="queryAccountAuthBasic" resultMap="AccountAuthListDetailsMap" parameterType="com.troy.trade.model.dto.in.account.AccountAuthListDto">
+		SELECT
+            aa.account_auth_id,
+			a.exch_code,
+			a.name,
+			a.account_id,
+			aa.auth_resource,
+			aa.master_user_name,
+			aa.slave_user_name
+		FROM
+			account a
+			LEFT JOIN account_auth aa ON aa.account_id = a.account_id
+		<where>
+			aa.status = 1
+			<if test="userId != null">
+				and aa.master_user_id = #{userId,jdbcType=BIGINT}
+			</if>
+			<if test="proxyUserId != null">
+				and aa.slave_user_id = #{proxyUserId,jdbcType=BIGINT}
+			</if>
+			<if test="status != null">
+				and aa.status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="accountName != null and accountName!=''">
+				and a.name like CONCAT('%',#{accountName,jdbcType=VARCHAR},'%')
+			</if>
+		</where>
+	</select>
+
+</mapper>
